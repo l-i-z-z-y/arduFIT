@@ -83,3 +83,19 @@ void loop() {
   // delay before next reading:
   delay(100);
 }
+
+void serialPrintValues()
+{
+  Serial.print(analogRead(ypin));
+  // print a tab between values:
+  Serial.print("\t");
+
+  int value = analogRead(zpin);
+  Serial.print(value);
+}
+
+float calculateGforce(int value)
+{
+  float voltage = (float) (5/1024.0)*value;
+  return (voltage - zVoltageOffset)*(accMax/zVoltageOffset);
+}
