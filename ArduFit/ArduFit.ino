@@ -26,9 +26,9 @@ int squads = 0;
 void updateStateScreen(){
   u8x8.setFont(u8x8_font_chroma48medium8_r);
   u8x8.drawString(0,0,"     ArduFIT     "); //Print the String
-  u8x8.drawString(3,0,"SitUps:    "+sitUps);
-  u8x8.drawString(5,0,"PushUps:    "+pushUps);
-  u8x8.drawString(7,0,"Squads:    "+squads);
+  u8x8.drawString(0,3,"SitUps:    ");
+  u8x8.drawString(0,5,"PushUps:    ");
+  u8x8.drawString(0,7,"Squads:    ");
   u8x8.refreshDisplay();
   delay(2000);
 }
