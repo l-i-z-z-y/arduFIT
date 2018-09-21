@@ -1,31 +1,11 @@
-#include <Wire.h>
-#include <SeeedOLED.h>
-/*
-  ADXL3xx
+#include <Arduino.h>
+#include <U8x8lib.h>
 
-  Reads an Analog Devices ADXL3xx accelerometer and communicates the
-  acceleration to the computer. The pins used are designed to be easily
-  compatible with the breakout boards from SparkFun, available from:
-  http://www.sparkfun.com/commerce/categories.php?c=80
+#ifdef U8X8_HAVE_HW_SPI
+#include <SPI.h>
+#endif
 
-  The circuit:
-  - analog 0: accelerometer self test
-  - analog 1: z-axis
-  - analog 2: y-axis
-  - analog 3: x-axis
-  - analog 4: ground
-  - analog 5: vcc
-
-  created 2 Jul 2008
-  by David A. Mellis
-  modified 30 Aug 2011
-  by Tom Igoe
-
-  This example code is in the public domain.
-
-  http://www.arduino.cc/en/Tutorial/ADXL3xx
-*/
-// we maybe should remove this^^
+U8X8_SSD1306_128X64_NONAME_SW_I2C u8x8(/* clock=*/ SCL, /* data=*/ SDA, /* reset=*/ U8X8_PIN_NONE);   // OLEDs without Reset of the Display
 
 // these constants describe the pins. They won't change:
 //const int groundpin = 16;             // analog input pin 4 -- ground
@@ -44,32 +24,29 @@ int pushUps = 0;
 int squads = 0;
 
 void updateStateScreen(){
-  SeeedOled.setTextXY(0,0);
-  SeeedOled.putString("     ArduFIT     "); //Print the String
-  SeeedOled.setTextXY(3,0);         
-  SeeedOled.putString("SitUps:    ");
-  SeeedOled.putNumber(sitUps);
-  SeeedOled.setTextXY(5,0);         
-  SeeedOled.putString("PushUps:   ");
-  SeeedOled.putNumber(pushUps);
-  SeeedOled.setTextXY(7,0);         
-  SeeedOled.putString("Squads:    ");
-  SeeedOled.putNumber(squads);
+  u8x8.setFont(u8x8_font_chroma48medium8_r);
+  u8x8.drawString(0,0,"     ArduFIT     "); //Print the String
+  u8x8.drawString(0,3,"SitUps:    ");
+  u8x8.drawString(0,5,"PushUps:    ");
+  u8x8.drawString(0,7,"Squads:    ");
+  u8x8.refreshDisplay();
+  delay(2000);
 }
 
 
 void setup() {
-  // display header
-  Wire.begin();
-  SeeedOled.init();  //initialze SEEED OLED display
-
-  SeeedOled.clearDisplay();          //clear the screen and set start position to top left corner
-  SeeedOled.setNormalDisplay();      //Set display to normal mode (i.e non-inverse mode)
-  SeeedOled.setPageMode();           //Set addressing mode to Page Mode
-  SeeedOled.setTextXY(0,0);          //Set the cursor to Xth Page, Yth Column  
-  SeeedOled.putString("ready?"); //Print the String
-
- 
+   /* U8g2 Project: SSD1306 Test Board */
+  //pinMode(10, OUTPUT);
+  //pinMode(9, OUTPUT);
+  //digitalWrite(10, 0);
+  //digitalWrite(9, 0);   
+  
+  /* U8g2 Project: KS0108 Test Board */
+  //pinMode(16, OUTPUT);
+  //digitalWrite(16, 0);  
+  
+  u8x8.begin();
+  u8x8.setPowerSave(0);
   // initialize the serial communications:
   Serial.begin(9600);
   updateStateScreen();
