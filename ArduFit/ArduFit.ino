@@ -34,6 +34,9 @@ const int xpin = A0;                  // x-axis of the accelerometer
 const int ypin = A1;                  // y-axis
 const int zpin = A2;                  // z-axis (only on 3-axis models)
 
+const float zVoltageOffset = 1.65;
+const float accMax = 5;
+
 
 // counter for exercises
 int sitUps = 0;
@@ -54,6 +57,7 @@ void updateStateScreen(){
   SeeedOled.putNumber(squads);
 }
 
+
 void setup() {
   // display header
   Wire.begin();
@@ -71,6 +75,8 @@ void setup() {
   updateStateScreen();
 }
 
+
+
 void loop() {
 // ToDo:
 // function getSensorData
@@ -78,6 +84,8 @@ void loop() {
 // function isSitUp()
 // function isPushUp();
 // function isSquad();
+
+  
  
   // print the sensor values:
   Serial.print(analogRead(xpin));
@@ -86,9 +94,15 @@ void loop() {
   Serial.print(analogRead(ypin));
   // print a tab between values:
   Serial.print("\t");
-  Serial.print(analogRead(zpin));
+
+  int value = analogRead(zpin);
+  Serial.print(value);
  
-  Serial.println();
+  float voltage = (float) (5/1024.0)*value;
+  float acc = (voltage - zVoltageOffset)/zVoltageOffset * accMax;
+    
+  Serial.print("in G: ");
+  Serial.println(acc);
   // delay before next reading:
   delay(100);
 }
