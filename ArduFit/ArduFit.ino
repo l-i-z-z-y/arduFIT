@@ -25,7 +25,7 @@
 
   http://www.arduino.cc/en/Tutorial/ADXL3xx
 */
-
+// we maybe should remove this^^
 
 // these constants describe the pins. They won't change:
 //const int groundpin = 16;             // analog input pin 4 -- ground
