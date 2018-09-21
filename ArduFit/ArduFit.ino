@@ -68,18 +68,7 @@ void setup() {
  
   // initialize the serial communications:
   Serial.begin(9600);
-
-  // Provide ground and power by using the analog inputs as normal digital pins.
-  // This makes it possible to directly connect the breakout board to the
-  // Arduino. If you use the normal 5V and GND pins on the Arduino,
-  // you can remove these lines.
- // pinMode(groundpin, OUTPUT);
-  //pinMode(powerpin, OUTPUT);
-//  digitalWrite(groundpin, LOW);
-  //digitalWrite(powerpin, HIGH);
-
   updateStateScreen();
-
 }
 
 void loop() {
@@ -89,9 +78,6 @@ void loop() {
 // function isSitUp()
 // function isPushUp();
 // function isSquad();
-
-
-
  
   // print the sensor values:
   Serial.print(analogRead(xpin));
