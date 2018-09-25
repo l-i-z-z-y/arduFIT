@@ -18,6 +18,16 @@ int sitUps = 0;
 int pushUps = 0;
 int squads = 0;
 
+void updateStateScreen(){
+  u8x8.setFont(u8x8_font_chroma48medium8_r);
+  u8x8.drawString(0,0,"     ArduFIT     ");
+  u8x8.drawString(0, 3,"SitUps:    ");
+  u8x8.drawString(0, 5,"PushUps:   ");
+  u8x8.drawString(0, 7,"Squads:    ");
+  u8x8.refreshDisplay();
+}
+
+
 void setup() {
   u8x8.begin();
   u8x8.setPowerSave(0);
