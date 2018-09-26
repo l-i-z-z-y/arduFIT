@@ -18,6 +18,10 @@ int sitUps = 0;
 int pushUps = 0;
 int squads = 0;
 
+int xValue = 0;
+int yValue = 0;
+int zValue = 0;
+
 void updateStateScreen(){
   u8x8.setFont(u8x8_font_chroma48medium8_r);
   u8x8.drawString(0,0,"     ArduFIT     ");
@@ -34,6 +38,7 @@ void setup() {
   // initialize the serial communications:
   Serial.begin(9600);
   updateStateScreen();
+  updateStatesOnScreen();
 }
 
 void loop() {
@@ -44,19 +49,55 @@ void loop() {
 // function isPushUp();
 // function isSquad();
 
-  serialPrintValues();
+  readValues();
+   
+  if(isSitUp())
+  {
+    sitUps = sitUps +1;
+    updateStatesOnScreen();
+  }
+  
+  serialPrintGValues();
   delay(100);
 }
 
-void serialPrintValues()
+void readValues()
 {
-  float xAcc = calculateGforce(analogRead(xpin));
+  xValue = analogRead(xpin);
+  yValue = analogRead(ypin);
+  zValue = analogRead(zpin);
+}
+
+void updateStatesOnScreen()
+{
+  String sitUpsString = String(sitUps);
+  u8x8.setCursor(10,3);
+  u8x8.print(sitUps);
+  u8x8.setCursor(10,5);
+  u8x8.print(pushUps);
+  u8x8.setCursor(10,7);
+  u8x8.print(squads);
+  u8x8.refreshDisplay();
+}
+
+boolean isSitUp()
+{
+  if(calculateGforce(zValue) > 0.8)
+  {
+    return true;
+  }
+  else return false;
+}
+
+void serialPrintGValues()
+{
+  float xAcc = calculateGforce(xValue);
   Serial.print(xAcc);
   Serial.print("\t");
-  float yAcc = calculateGforce(analogRead(ypin));
+  float yAcc = calculateGforce(yValue);
   Serial.print(yAcc);
   Serial.print("\t");
-  float zAcc = calculateGforce(analogRead(zpin));
+  float zAcc = calculateGforce(zValue);
   Serial.print(zAcc);
   Serial.print("\t");
   Serial.println();
