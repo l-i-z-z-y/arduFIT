@@ -22,6 +22,8 @@ int xValue = 0;
 int yValue = 0;
 int zValue = 0;
 
+float zVel = 0;
+
 void updateStateScreen(){
   u8x8.setFont(u8x8_font_chroma48medium8_r);
   u8x8.drawString(0,0,"     ArduFIT     ");
@@ -43,9 +45,6 @@ void setup() {
 
 void loop() {
 // ToDo:
-// function getSensorData
-// function convertToG // convert to m/s^2
-// function isSitUp()
 // function isPushUp();
 // function isSquad();
 
@@ -54,9 +53,18 @@ void loop() {
   if(isSitUp())
   {
     sitUps = sitUps +1;
-    updateStatesOnScreen();
+  }
+  if (isSquad)
+  {
+    squads = squads +1;
+
+  }
+  if (isPushUp())
+  {
+    pushUps = pushUps +1;
   }
   
+  updateStatesOnScreen();
   serialPrintGValues();
   delay(100);
 }
@@ -70,7 +78,6 @@ void readValues()
 
 void updateStatesOnScreen()
 {
-  String sitUpsString = String(sitUps);
   u8x8.setCursor(10,3);
   u8x8.print(sitUps);
   u8x8.setCursor(10,5);
@@ -82,7 +89,25 @@ void updateStatesOnScreen()
 
 boolean isSitUp()
 {
-  if(calculateGforce(zValue) > 0.8)
+  if(calculateGforce(zValue) > (float)0.8)
+  {
+    return true;
+  }
+  else return false;
+}
+
+boolean isSquad()
+{
+  if(calculateGforce(yValue) > (float)0.8)
+  {
+    return true;
+  }
+  else return false;
+}
+
+boolean isPushUp()
+{
+  if(calculateGforce(xValue) > (float)0.7)
   {
     return true;
   }
