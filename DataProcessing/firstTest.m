@@ -4,7 +4,7 @@ clear all
 close all
 
 'load files from '
-folderPath = 'C:/Users/Lukas/Documents/Sensorik/TestData/SmartPhoneExamples1/*.txt'
+folderPath = 'C:/Users/Lukas/Documents/Sensorik/arduFIT/DataProcessing/SmartphoneData/*.txt'
 sampling_frequnecy = 10;
 
 
