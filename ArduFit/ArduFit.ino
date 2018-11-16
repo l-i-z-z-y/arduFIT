@@ -98,7 +98,7 @@ boolean isSitUp()
 
 boolean isSquad()
 {
-  if(calculateGforce(yValue) > (float)0.8)
+  if(calculateGforce(yValue) > (float)0.9)
   {
     return true;
   }
@@ -107,7 +107,7 @@ boolean isSquad()
 
 boolean isPushUp()
 {
-  if(calculateGforce(xValue) > (float)0.7)
+  if(calculateGforce(xValue) < (float)0.8)
   {
     return true;
   }
