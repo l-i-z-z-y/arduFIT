@@ -20,15 +20,22 @@ float acc;
 int sitUps = 0;
 int pushUps = 0;
 int squads = 0;
-//
+// sensor data
 int xValue = 0;
 int yValue = 0;
 int zValue = 0;
+// mean filter variables
+const int numReadings = 20;
 
-float zVel = 0;
+int readings[numReadings];      // the readings from the analog input
+int readIndex = 0;              // the index of the current reading
+int total = 0;                  // the running total
+int average = 0;                // the average
 
-float lastStateChangeTime = millis();
+// state change variables
 const float stateChangeDifference = 10000; // 10 seconds
+float lastStateChangeTime = millis();
+
 
 
 void updateStateScreen(){
@@ -44,7 +51,10 @@ void updateStateScreen(){
 void setup() {
   u8x8.begin();
   u8x8.setPowerSave(0);
-  Serial.begin(9600);
+  Serial.begin(115200);
+  for (int thisReading = 0; thisReading < numReadings; thisReading++) {
+    readings[thisReading] = 0; // initialize array
+  }
   updateStateScreen();
   updateStatesOnScreen();
 }
@@ -80,7 +90,7 @@ void readValues()
   // calculate absolute Acceleraton
   acc = sqrt(square(xValue) + square(yValue));
   acc = sqrt(square(acc) + square(zValue));
-  Serial.println(acc);
+  Serial.println(calculateMeanValue(acc));
 
 }
 
@@ -145,4 +155,28 @@ float calculateGforce(int value)
 {
   float voltage = (float) (5/1024.0)*value;
   return (voltage - zVoltageOffset)*(accMax/zVoltageOffset);
+}
+
+float calculateMeanValue(int value)
+{
+  // subtract the last reading:
+  total = total - readings[readIndex];
+  // read from the sensor:
+  readings[readIndex] = value;
+  // add the reading to the total:
+  total = total + readings[readIndex];
+  // advance to the next position in the array:
+  readIndex = readIndex + 1;
+
+  // if we're at the end of the array...
+  if (readIndex >= numReadings) {
+    // ...wrap around to the beginning:
+    readIndex = 0;
+  }
+
+  // calculate the average:
+  average = total / numReadings;
+  // send it to the computer as ASCII digits
+  //Serial.println(average);
+  return average;
 }
