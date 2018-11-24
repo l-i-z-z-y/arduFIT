@@ -1,5 +1,6 @@
 #include <Arduino.h>
 #include <U8x8lib.h>
+
 #include <Math.h>
 #ifdef U8X8_HAVE_HW_SPI
 #include <SPI.h>
@@ -25,7 +26,7 @@ int xValue = 0;
 int yValue = 0;
 int zValue = 0;
 // mean filter variables
-const int numReadings = 20;
+const int numReadings = 200;
 
 int readings[numReadings];      // the readings from the analog input
 int readIndex = 0;              // the index of the current reading
@@ -36,6 +37,8 @@ int average = 0;                // the average
 const float stateChangeDifference = 10000; // 10 seconds
 float lastStateChangeTime = millis();
 
+// squad sample data
+float squadSample[95] ={0.18,0.18,0.21,0.18,0.18,0.19,0.15,0.21,0.16,0.18,0.16,0.18,0.16,0.16,0.18,0.16,0.16,0.18,0.12,0.10,-0.03,-0.10,-0.01,-0.01,0.00,-0.19,-0.31,-0.43,-0.34,-0.37,-0.37,-0.32,-0.32,-0.32,-0.24,-0.31,-0.31,-0.32,-0.34,-0.31,-0.34,-0.31,-0.25,-0.22,-0.21,-0.13,-0.12,-0.01,-0.04,-0.01,-0.06,-0.04,-0.04,-0.03,-0.06,-0.06,0.05,0.08,0.09,-0.21,-0.07,-0.06,-0.10,0.08,0.10,0.09,0.05,0.00,0.02,0.15,0.15,-0.12,0.03,0.16,0.05,0.06,0.06,0.40,0.05,0.06,0.05,-0.01,0.09,0.05,0.05,0.10,0.03,0.00,0.15,-0.01,0.08,-0.04,0.22,-0.06,0.18};
 
 
 void updateStateScreen(){
@@ -78,6 +81,7 @@ void loop() {
 
   updateStatesOnScreen();
   //serialPrintGValues();
+  printCorrelation();
   delay(1);
 }
 
@@ -90,8 +94,6 @@ void readValues()
   // calculate absolute Acceleraton
   acc = sqrt(square(xValue) + square(yValue));
   acc = sqrt(square(acc) + square(zValue));
-  Serial.println(calculateMeanValue(acc));
-
 }
 
 void updateStatesOnScreen()
@@ -137,6 +139,28 @@ boolean isPushUp()
   return false;
 }
 
+void printCorrelation()
+{
+  float sampleLength =  sizeof(squadSample);
+  int dataLength = numReadings;
+  float result[dataLength];
+  
+  for (int i = 0; i < dataLength - sampleLength; i++) {
+    result[i] = 0;
+    Serial.print((float)squadSample[i]);
+    for (int j = 0; j < sampleLength; j++) {
+      result[i] += readings[i+j] * squadSample[j];      
+    }
+  }
+
+  float maximum = 0;
+  for ( int i = 0; i < dataLength; i++) {
+    if(maximum < result[i] ) {maximum = result[i];}
+  }
+  //Serial.println(maximum);
+  Serial.println();
+}
+
 void serialPrintGValues()
 {
   float xAcc = calculateGforce(xValue);
@@ -148,7 +172,11 @@ void serialPrintGValues()
   float zAcc = calculateGforce(zValue);
   Serial.print(zAcc);
   Serial.print("\t");
+  Serial.print(acc/calculateMeanValue(acc));
+  //Serial.print("\t");
+  //Serial.println(acc- calculateMeanValue(acc));
   Serial.println();
+  
 }
 
 float calculateGforce(int value)
