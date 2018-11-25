@@ -98,7 +98,7 @@ void decideState()
 void countExercises()
 {
   if(state == states[0])
-  {
+  { // SitUp
     if(calculateGforce(yValue) > (float)0.8)
     { // Up
       tmpChangedStateCount++;
@@ -111,12 +111,31 @@ void countExercises()
     }
   }
   if(state == states[1])
-  {
-    squads++;
+  { // PushUp
+    if(calculateGforce(zValue) < (float)-1.1)
+    { // Down
+      tmpChangedStateCount++;
+    }
+    if(calculateGforce(zValue) < (float)0.6 && calculateGforce(zValue) > (float)-1.1 && tmpChangedStateCount != 0)
+    { // Up
+      lastStateChangeTime = millis();
+      tmpChangedStateCount = 0;
+      pushUps++;
+    }
   }
   if(state == states[2])
-  {
-    pushUps++;
+  { // Squad
+    if(calculateGforce(yValue) > (float)1.2)
+    { // Down
+      tmpChangedStateCount++;
+    }
+    if(calculateGforce(yValue) > (float)0.8 && calculateGforce(yValue) < (float)1.2 && tmpChangedStateCount != 0)
+    {
+      lastStateChangeTime = millis();
+      tmpChangedStateCount = 0;
+      squads++;
+    }
+
   }
 }
 
@@ -195,8 +214,8 @@ void updateStatesOnScreen()
 // ################## SERIAL ##################
 void serialPrintGValues()
 {
-  Serial.print(state);
-  Serial.print("\t");
+  //Serial.print(state);
+  //Serial.print("\t");
   float xAcc = calculateGforce(xValue);
   Serial.print(xAcc);
   Serial.print("\t");
